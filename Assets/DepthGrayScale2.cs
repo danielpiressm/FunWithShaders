@@ -21,14 +21,15 @@ public class DepthGrayScale2 : MonoBehaviour
     public Shader shader;
     Camera mCamera;
     public RenderTexture initTexture;
+    Texture2D decTex;
     // Use this for initialization
     void Awake()
     {
-        rTex = CreateBuffer();
-        mat = CreateMaterial(shader);
+        
         mCamera = this.GetComponent<Camera>();
         rTex = mCamera.targetTexture;
         mCamera.SetReplacementShader(shader, "");
+        decTex = new Texture2D(128, 128, TextureFormat.RGBAFloat, false);
         //mCamera.targetTexture.name = "lol";
        // mCamera.ResetReplacementShader();
         //initTexture = mCamera.targetTexture;
@@ -69,14 +70,14 @@ public class DepthGrayScale2 : MonoBehaviour
         Color[] colors = decTex.GetPixels();
         
         float[] results = new float[colors.Length * 4];
-        Vector4 point = new Vector4();
+        //Vector4 point = new Vector4();
         for (int i = 0; i < colors.Length; i++)
         {
             results[i * 4] = colors[i].r;
             results[i * 4 + 1] = colors[i].g;
             results[i * 4 + 2] = colors[i].b;
             results[i * 4 + 3] = colors[i].a;
-            point = new Vector4(colors[i].r, colors[i].g, colors[i].b, colors[i].a);
+          //  point = new Vector4(colors[i].r, colors[i].g, colors[i].b, colors[i].a);
         }
         return results;
     }
@@ -87,46 +88,12 @@ public class DepthGrayScale2 : MonoBehaviour
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination);
-        GameObject obj = GameObject.Find("SQUARE");
-        obj.GetComponent<Renderer>().material.mainTexture = mCamera.targetTexture;
-        array = DecodeFloatTexture(mCamera.targetTexture);
-
-        float max = 0;
-        float min = -10;
-        for (int i = 0; i < array.Length; i++)
-        {
-            if (max > array[i])
-                max = array[i];
-            if (min <= array[i] && array[i] != 0)
-                min = array[i];
-        }
-
-        Debug.Log("max = " + max + " min =" + min);
+        RenderTexture.active = rTex;
+        decTex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
+        decTex.Apply();
+        RenderTexture.active = null;
+        Color[] colors = decTex.GetPixels();
+        //DecodeFloatTexture(mCamera.targetTexture);
     }
 
-
-  void Update()
-    {
-       // mCamera.SetReplacementShader(shader, "");
-
-    }
-
-
-
-    RenderTexture CreateBuffer()
-    {
-        var buffer = new RenderTexture(M, N, 0, RenderTextureFormat.ARGB32);
-        buffer.hideFlags = HideFlags.DontSave;
-        buffer.filterMode = FilterMode.Point;
-        buffer.wrapMode = TextureWrapMode.Repeat;
-       
-        return buffer;
-    }
-
-    Material CreateMaterial(Shader shader)
-    {
-        var material = new Material(shader);
-        material.hideFlags = HideFlags.DontSave;
-        return material;
-    }
 }
