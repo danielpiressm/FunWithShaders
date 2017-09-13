@@ -8,7 +8,7 @@ public class DepthGrayScale2 : MonoBehaviour
     Vector3[] positions;
     public float[] radiuses;
     public float[] intensities;
-    public float[] array;
+    float[] array;
 
     public float[,] texture;
 
@@ -20,15 +20,21 @@ public class DepthGrayScale2 : MonoBehaviour
     public int N;
     public Shader shader;
     Camera mCamera;
+    public RenderTexture initTexture;
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         rTex = CreateBuffer();
         mat = CreateMaterial(shader);
         mCamera = this.GetComponent<Camera>();
+        rTex = mCamera.targetTexture;
         mCamera.SetReplacementShader(shader, "");
-        mCamera.targetTexture = rTex;
-        mCamera.depthTextureMode = DepthTextureMode.Depth;
+        //mCamera.targetTexture.name = "lol";
+       // mCamera.ResetReplacementShader();
+        //initTexture = mCamera.targetTexture;
+       
+
+        //mCamera.depthTextureMode = DepthTextureMode.Depth;
     }
 
     float[] DecodeFloatTexture()
@@ -75,6 +81,8 @@ public class DepthGrayScale2 : MonoBehaviour
         return results;
     }
 
+    
+
     // Update is called once per frame
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -97,13 +105,17 @@ public class DepthGrayScale2 : MonoBehaviour
     }
 
 
-  
+  void Update()
+    {
+       // mCamera.SetReplacementShader(shader, "");
+
+    }
 
 
-  
+
     RenderTexture CreateBuffer()
     {
-        var buffer = new RenderTexture(M, N, 0, RenderTextureFormat.ARGBFloat);
+        var buffer = new RenderTexture(M, N, 0, RenderTextureFormat.ARGB32);
         buffer.hideFlags = HideFlags.DontSave;
         buffer.filterMode = FilterMode.Point;
         buffer.wrapMode = TextureWrapMode.Repeat;
