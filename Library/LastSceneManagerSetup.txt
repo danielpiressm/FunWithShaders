@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/shaderAdaptiveScene.unity
+  isLoaded: 1
+  isActive: 1
