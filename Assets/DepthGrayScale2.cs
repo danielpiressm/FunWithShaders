@@ -29,24 +29,23 @@ public class DepthGrayScale2 : MonoBehaviour
         mCamera = this.GetComponent<Camera>();
         rTex = mCamera.targetTexture;
         mCamera.SetReplacementShader(shader, "");
-        decTex = new Texture2D(128, 128, TextureFormat.RGBAFloat, false);
+        decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
         //mCamera.targetTexture.name = "lol";
        // mCamera.ResetReplacementShader();
         //initTexture = mCamera.targetTexture;
        
 
-        //mCamera.depthTextureMode = DepthTextureMode.Depth;
+        mCamera.depthTextureMode = DepthTextureMode.Depth;
     }
 
     float[] DecodeFloatTexture()
     {
-        Texture2D decTex = new Texture2D(rTex.width, rTex.height, TextureFormat.RGBAFloat, false);
         RenderTexture.active = rTex;
         decTex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
         decTex.Apply();
         RenderTexture.active = null;
         Color[] colors = decTex.GetPixels();
-        
+
         float[] results = new float[colors.Length * 4];
         Vector4 point = new Vector4();
         for (int i = 0; i < colors.Length; i++)
@@ -88,11 +87,7 @@ public class DepthGrayScale2 : MonoBehaviour
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination);
-        RenderTexture.active = rTex;
-        decTex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
-        decTex.Apply();
-        RenderTexture.active = null;
-        Color[] colors = decTex.GetPixels();
+        array = DecodeFloatTexture();
         //DecodeFloatTexture(mCamera.targetTexture);
     }
 

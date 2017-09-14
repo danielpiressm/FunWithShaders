@@ -38,10 +38,12 @@ Shader "Custom/DepthShader"
 		float4 pos : SV_POSITION;
 		float4 projPos : TEXCOORD0; //Screen position of pos
 		float4 wPos : TEXCOORD1;
+		float4 uv : TEXCOORD2;
 	};
 
 	struct vertInput {
 		float4 pos : POSITION;
+		float4 texcoord1 : TEXCOORD1;
 	};
 
 	v2f vert(vertInput input) {
@@ -49,6 +51,7 @@ Shader "Custom/DepthShader"
 		o.pos = UnityObjectToClipPos(input.pos);
 		o.projPos = UnityObjectToClipPos(input.pos);
 		o.wPos = mul(unity_ObjectToWorld, input.pos);
+		o.uv = float4(input.texcoord1.xy, 0, 0);
 		return o;
 	}
 
@@ -65,7 +68,7 @@ Shader "Custom/DepthShader"
 		
 		float w = 1;
 
-		return float4(x,y,z,1);
+		return float4(i.uv.x,i.uv.y,0,0);
 	}
 
 		ENDCG
