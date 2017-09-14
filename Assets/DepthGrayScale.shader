@@ -15,23 +15,9 @@
 
 Shader "Custom/DepthShader"
 {
-	SubShader
-	{
+	CGINCLUDE
 
-		Pass
-	{
-		ZTest Always  ZWrite On
-		Fog{ Mode off }
-
-		CGPROGRAM
-#pragma target 3.0
-#pragma vertex vert
-#pragma fragment frag
-#include "UnityCG.cginc"
-#pragma fragmentoption ARB_precision_hint_nicest
-
-
-	//uniform sampler2D _CameraDepthTexture; //the depth texture
+	#include "UnityCG.cginc"
 
 	struct v2f
 	{
@@ -58,21 +44,33 @@ Shader "Custom/DepthShader"
 	uniform int _Points_Length = 9;
 	uniform float3 _Points[9];
 
-	
+
 
 	float4 frag(v2f i) : COLOR
 	{
 		float4 c;
-		float x = i.wPos.x;
-		float y = i.wPos.y;
-		float z = i.wPos.z;
-		
+		float x = i.pos.x;
+		float y = i.pos.y;
+		float z = i.pos.z;
 		float w = 1;
-
-		return float4(i.uv.x*9,i.uv.y*9,0,0);
+		return float4(x,y,z,1);
 	}
 
-		ENDCG
-	}
+	ENDCG
+
+	SubShader
+	{
+		Pass
+		{
+			ZTest Always  ZWrite On
+			Fog{ Mode off }
+
+			CGPROGRAM
+			#pragma target 3.0
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_nicest
+			ENDCG
+		}
 	}
 }
