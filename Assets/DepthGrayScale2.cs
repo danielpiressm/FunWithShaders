@@ -28,6 +28,8 @@ public class DepthGrayScale2 : MonoBehaviour
         
         mCamera = this.GetComponent<Camera>();
         rTex = mCamera.targetTexture;
+        rTex.width = M;
+        rTex.height = N;
         mCamera.SetReplacementShader(shader, "");
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
         //mCamera.targetTexture.name = "lol";

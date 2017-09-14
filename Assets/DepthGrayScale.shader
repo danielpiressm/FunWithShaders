@@ -55,7 +55,8 @@ Shader "Custom/DepthShader"
 		return o;
 	}
 
-	
+	uniform int _Points_Length = 9;
+	uniform float3 _Points[9];
 
 	
 
@@ -68,7 +69,7 @@ Shader "Custom/DepthShader"
 		
 		float w = 1;
 
-		return float4(i.uv.x,i.uv.y,0,0);
+		return float4(i.uv.x*9,i.uv.y*9,0,0);
 	}
 
 		ENDCG
