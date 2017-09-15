@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DepthGrayScale2 : MonoBehaviour
+public class DepthGrayScale3: MonoBehaviour
 {
 
     Vector3[] positions;
@@ -22,6 +22,9 @@ public class DepthGrayScale2 : MonoBehaviour
     public RenderTexture initTexture;
     Texture2D decTex;
 
+    public int countTrues = 0;
+    public int countFalses = 0;
+
     public float testt = 0.0f;
     // Use this for initialization
     void Awake()
@@ -34,14 +37,14 @@ public class DepthGrayScale2 : MonoBehaviour
         mCamera.SetReplacementShader(shader, "");
         
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
-        tTask = transform.parent.GetComponent<TestTask>();
-        // mCamera.
+       // mCamera.
         //mCamera.targetTexture.name = "lol";
-        // mCamera.ResetReplacementShader();
+       // mCamera.ResetReplacementShader();
         //initTexture = mCamera.targetTexture;
-
+       
 
         mCamera.depthTextureMode = DepthTextureMode.MotionVectors;
+        tTask = transform.parent.GetComponent<TestTask>();
     }
 
     float[] DecodeFloatTexture()
@@ -96,7 +99,16 @@ public class DepthGrayScale2 : MonoBehaviour
         Graphics.Blit(source, destination);
         array = DecodeFloatTexture();
         Debug.Log("test = " + Shader.GetGlobalFloat("_test"));
-        tTask.setArray1(array);
+        tTask.setArray2(array);
+
+
+        Debug.Log("time between = " + tTask.getTimeBetweenFrames() + " frames are equal =" + tTask.compareTwoArrays() );
+        if (tTask.compareTwoArrays())
+        {
+            tTask.countTrues++;
+        }
+        else
+            tTask.countFalses++;
         //DecodeFloatTexture(mCamera.targetTexture);
     }
 

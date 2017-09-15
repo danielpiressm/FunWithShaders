@@ -1,7 +1,7 @@
 ﻿
 //Shows the grayscale of the depth from the camera.
 
-Shader "Custom/DepthShader"
+Shader "Custom/DepthShader2"
 {
 		CGINCLUDE
 
