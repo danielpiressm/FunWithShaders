@@ -35,7 +35,6 @@ public class TestTask : MonoBehaviour {
 
     public float getTimeBetweenFrames()
     {
-
         return (timeStamp2 - timeStamp1);
     }
 
