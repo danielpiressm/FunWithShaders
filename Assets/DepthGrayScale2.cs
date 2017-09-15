@@ -7,6 +7,7 @@ public class DepthGrayScale2 : MonoBehaviour
 
     Vector3[] positions;
     float[] array;
+    float[] lastFrameArray;
     TestTask tTask;
 
     public float[,] texture;
@@ -35,6 +36,9 @@ public class DepthGrayScale2 : MonoBehaviour
         
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
         tTask = transform.parent.GetComponent<TestTask>();
+        rTex.width = M;
+        rTex.height = N;
+
         // mCamera.
         //mCamera.targetTexture.name = "lol";
         // mCamera.ResetReplacementShader();
@@ -92,11 +96,17 @@ public class DepthGrayScale2 : MonoBehaviour
     // Update is called once per frame
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        //Shader.SetGlobalFloat("_test", testt);
+        
         Graphics.Blit(source, destination);
+        Shader.SetGlobalFloat("_test", 4);
         array = DecodeFloatTexture();
-        Debug.Log("test = " + Shader.GetGlobalFloat("_test"));
         tTask.setArray1(array);
+
+        //do something with the array
+
+        lastFrameArray = array;
+        
+
         //DecodeFloatTexture(mCamera.targetTexture);
     }
 

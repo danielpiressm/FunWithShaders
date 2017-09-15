@@ -31,7 +31,7 @@ Shader "Custom/DepthShader"
 
 		uniform int _Points_Length = 9;
 		uniform float3 _Points[9];
-
+		float _test;
 
 
 		float4 frag(v2f i) : COLOR
@@ -41,7 +41,7 @@ Shader "Custom/DepthShader"
 			float y = i.projPos.y;
 			float z = i.projPos.z;
 			float w = 1;
-			return float4(x,y,z,1);
+			return float4(_test,0,0,0);
 		}
 
 		ENDCG

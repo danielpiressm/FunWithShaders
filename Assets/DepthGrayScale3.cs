@@ -98,11 +98,11 @@ public class DepthGrayScale3: MonoBehaviour
         //Shader.SetGlobalFloat("_test", testt);
         Graphics.Blit(source, destination);
         array = DecodeFloatTexture();
-        Debug.Log("test = " + Shader.GetGlobalFloat("_test"));
+        //Debug.Log("test = " + Shader.GetGlobalFloat("_test"));
         tTask.setArray2(array);
 
 
-        Debug.Log("time between = " + tTask.getTimeBetweenFrames() + " frames are equal =" + tTask.compareTwoArrays() );
+        //Debug.Log("time between = " + tTask.getTimeBetweenFrames() + " frames are equal =" + tTask.compareTwoArrays() );
         if (tTask.compareTwoArrays())
         {
             tTask.countTrues++;
