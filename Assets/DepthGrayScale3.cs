@@ -47,6 +47,8 @@ public class DepthGrayScale3: MonoBehaviour
         tTask = transform.parent.GetComponent<TestTask>();
     }
 
+    
+
     float[] DecodeFloatTexture()
     {
         RenderTexture.active = rTex;
