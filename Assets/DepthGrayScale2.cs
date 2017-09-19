@@ -4,33 +4,22 @@ using UnityEngine;
 
 public class DepthGrayScale2 : MonoBehaviour
 {
-
-    Vector3[] positions;
     float[] array;
     float[] lastFrameArray;
     TestTask tTask;
 
-    public float[,] texture;
 
     public RenderTexture rTex;
     public RenderTexture lastFrameTex;
 
-    RenderTexture texA;
-    RenderTexture texB;
 
     public Material mat;
-    //    public Material _kernelMaterial;
     public int M;
     public int N;
     public Shader shader;
     Camera mCamera;
-    public RenderTexture initTexture;
     Texture2D decTex;
-
-    Camera ppCamera;
-
-    public GameObject go1;
-    public GameObject go2;
+    int countFrames = 0;
 
     public float testt = 0.0f;
     // Use this for initialization
@@ -50,26 +39,9 @@ public class DepthGrayScale2 : MonoBehaviour
         rTex.width = M;
         rTex.height = N;
         Shader.SetGlobalInt("sizeImage", M);
-        // mCamera.
-        //mCamera.targetTexture.name = "lol";
-        // mCamera.ResetReplacementShader();
-        //initTexture = mCamera.targetTexture;
-
-
-        //mCamera.depthTextureMode = DepthTextureMode.MotionVectors;
     }
 
-    void OnEnable()
-    {
-        texA = RenderTexture.GetTemporary(Screen.width, Screen.height, 32, RenderTextureFormat.ARGBFloat);
-        texB = RenderTexture.GetTemporary(Screen.width, Screen.height, 32, RenderTextureFormat.ARGBFloat);
-    }
-
-    void OnDisable()
-    {
-        RenderTexture.ReleaseTemporary(texA);
-        RenderTexture.ReleaseTemporary(texB);
-    }
+   
 
     float[] DecodeFloatTexture()
     {
@@ -113,14 +85,12 @@ public class DepthGrayScale2 : MonoBehaviour
         return results;
     }
 
-    
 
     // Update is called once per frame
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         
         Graphics.Blit(source, destination);
-        //Shader.SetGlobalFloat("_test", 4);
         array = DecodeFloatTexture();
         tTask.setArray1(array);
 
@@ -136,16 +106,20 @@ public class DepthGrayScale2 : MonoBehaviour
             j+=2;
         }
         RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
-        Shader.SetGlobalTexture("_floatArray", rTex);
-        Graphics.Blit(rTex, rTex2, mat);
-        float[] tmpArray = DecodeFloatTexture(rTex2);
 
-        //do something with the array
-        //Debug.Log("true? = "+tTask.compareTwoArrays(array, tmpArray));
+        //a partir daqui sao contas marotas (e logicamente so consigo fazer isso após 1 frame :-) )
+        if(countFrames > 0)
+        {
+            Shader.SetGlobalTexture("_floatArray", rTex);
+            Shader.SetGlobalTexture("_lastFrameArray", lastFrameTex);
+            Graphics.Blit(rTex, rTex2, mat);
+            float[] tmpArray = DecodeFloatTexture(rTex2);
+        }
+
+        //agora guarda o frame anterior :-)
+        lastFrameTex = rTex;
         lastFrameArray = array;
-        
-
-        //DecodeFloatTexture(mCamera.targetTexture);
+        countFrames++;
     }
 
     
