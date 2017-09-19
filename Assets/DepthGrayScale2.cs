@@ -13,6 +13,7 @@ public class DepthGrayScale2 : MonoBehaviour
     public float[,] texture;
 
     public RenderTexture rTex;
+    public RenderTexture lastFrameTex;
 
     RenderTexture texA;
     RenderTexture texB;
@@ -124,26 +125,23 @@ public class DepthGrayScale2 : MonoBehaviour
         tTask.setArray1(array);
 
         float[] arrayOfUV = new float[M*N*2];
-        float[] arrayOfMyU = new float[M * N];
-        float[] arrayOfMyV = new float[M * N];
-        float[] arrayOfV = new float[M * N];
-        float[] arrayOfF = new float[M * N];
         int j = 0;
         for(int i = 3;i < array.Length;i+=4)
         {
-            
-            
             float F = array[i];
             float u = Mathf.Floor(F);
             float v = (F - u);
             arrayOfUV[j] = u;
             arrayOfUV[j + 1] = v;
-
             j+=2;
         }
-        
-        //do something with the array
+        RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
+        Shader.SetGlobalTexture("_floatArray", rTex);
+        Graphics.Blit(rTex, rTex2, mat);
+        float[] tmpArray = DecodeFloatTexture(rTex2);
 
+        //do something with the array
+        //Debug.Log("true? = "+tTask.compareTwoArrays(array, tmpArray));
         lastFrameArray = array;
         
 
