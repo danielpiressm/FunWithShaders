@@ -48,7 +48,7 @@ public class DepthGrayScale2 : MonoBehaviour
         tTask = transform.parent.GetComponent<TestTask>();
         rTex.width = M;
         rTex.height = N;
-        
+        Shader.SetGlobalInt("sizeImage", M);
         // mCamera.
         //mCamera.targetTexture.name = "lol";
         // mCamera.ResetReplacementShader();
@@ -123,6 +123,25 @@ public class DepthGrayScale2 : MonoBehaviour
         array = DecodeFloatTexture();
         tTask.setArray1(array);
 
+        float[] arrayOfUV = new float[M*N*2];
+        float[] arrayOfMyU = new float[M * N];
+        float[] arrayOfMyV = new float[M * N];
+        float[] arrayOfV = new float[M * N];
+        float[] arrayOfF = new float[M * N];
+        int j = 0;
+        for(int i = 3;i < array.Length;i+=4)
+        {
+            
+            
+            float F = array[i];
+            float u = Mathf.Floor(F);
+            float v = (F - u);
+            arrayOfUV[j] = u;
+            arrayOfUV[j + 1] = v;
+
+            j+=2;
+        }
+        
         //do something with the array
 
         lastFrameArray = array;

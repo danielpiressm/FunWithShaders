@@ -32,20 +32,23 @@ Shader "Custom/DepthShader"
 
 	uniform int _Points_Length = 9;
 	uniform float3 _Points[9];
-
+	int sizeImage = 4;
 
 
 	float4 frag(v2f i) : COLOR
 	{
 		float4 c;
-		float x = i.projPos.x;
-		float y = i.projPos.y;
-		float z = i.projPos.z;
+		float x = i.wPos.x;
+		float y = i.wPos.y;
+		float z = i.wPos.z;
 		float x1 = i.uv.x;
 		float y1 = i.uv.y;
+		float u =  round(x1 * (sizeImage - 1));
+		float v =  (y1 * (sizeImage - 1)) / 1000.0;
+		float f =  u +  v;
 
 
-		return float4(x1,y1,0,0);
+		return float4(x,y,z, f);
 	}
 
 		ENDCG
