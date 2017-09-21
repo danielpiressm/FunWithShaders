@@ -44,14 +44,14 @@ Shader "Custom/DepthShader3"
 		float z1 = c.z;
 		float F1 = c.w;
 		float u1 = floor(F1);
-		float v1 = (F1 - u1);
+		float v1 = ((F1 - u1)*1000.0)/255.0;
 
 		float x2 = a.x;
 		float y2 = a.y;
 		float z2 = a.z;
 		float F2 = a.w;
 		float u2 = floor(F2);
-		float v2 = (F2 - u2);
+		float v2 = ((F2 - u2)*1000.0)/255.0;
 		
 
 		float OF = 0.0f;
@@ -83,9 +83,9 @@ Shader "Custom/DepthShader3"
 		OF = 1 - exp(-pow(speedPixel, 2) / (2 * pow(m, 2)));
 
 
-
+		//return float4(TTC, OF, 0, 0);
 		//v = v / (2);
-		return float4(x1, y1, z1, F1);// float4(0,0,0,1);
+		return float4(x1, y1, z1, F1);
 	}
 
 		ENDCG

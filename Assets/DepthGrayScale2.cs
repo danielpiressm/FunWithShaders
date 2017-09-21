@@ -20,6 +20,7 @@ public class DepthGrayScale2 : MonoBehaviour
     Camera mCamera;
     Texture2D decTex;
     int countFrames = 0;
+    float previousTime = 0.0f;
 
     public float testt = 0.0f;
     // Use this for initialization
@@ -106,14 +107,48 @@ public class DepthGrayScale2 : MonoBehaviour
             j+=2;
         }
         RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
+        float currentTime = Time.realtimeSinceStartup;
+        float dt = currentTime - previousTime;
 
         //a partir daqui sao contas marotas (e logicamente so consigo fazer isso após 1 frame :-) )
         if(countFrames > 0)
         {
             Shader.SetGlobalTexture("_floatArray", rTex);
             Shader.SetGlobalTexture("_lastFrameArray", lastFrameTex);
+            Shader.SetGlobalFloat("dt", dt);
             Graphics.Blit(rTex, rTex2, mat);
             float[] tmpArray = DecodeFloatTexture(rTex2);
+
+            j = 0;
+            float h = 0.0f;
+            for (int i = 0; i < tmpArray.Length; i += 4)
+            {
+                //j = (i / 4);
+                
+                float TTCi = tmpArray[i];
+                float OFi = tmpArray[i + 1];
+                h += ((TTCi * (1 - OFi)) + OFi);
+                j++;
+            }
+            h = h / j;
+
+            //colocar esse codigo aqui em outro arquivo
+            float hopt = 65;
+            float s = 0;
+            float a = 0;
+            float dhmax = 0;
+            float tref = 0;
+            float sopt = s * (hopt / h);
+            float aopt = 0;
+            float speedd = 0;
+            if (h > hopt)
+                dhmax = -1200 + 20 * h;
+            else
+                dhmax = 7 + 13 * Mathf.Exp(-Mathf.Pow(h, 2) / 2 * 5 * 5);
+            tref = Mathf.Abs(hopt - h) / dhmax;
+            aopt = (sopt - s) / tref;
+            a = a + 0.05f * (aopt - a);
+            s = s + a * dt;
         }
 
         //agora guarda o frame anterior :-)
