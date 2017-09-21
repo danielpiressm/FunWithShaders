@@ -11,6 +11,7 @@ Shader "Custom/DepthShader3"
 	{
 		float4 pos : SV_POSITION;
 		float4 uv : TEXCOORD0;
+		float2 depth : TEXCOORD1;
 	};
 
 	struct vertInput {
@@ -22,6 +23,7 @@ Shader "Custom/DepthShader3"
 		v2f o;
 		o.pos = UnityObjectToClipPos(input.pos);
 		o.uv = float4(input.texcoord0.xy, 0, 0);
+		UNITY_TRANSFER_DEPTH(o.depth);
 		return o;
 	}
 
@@ -32,7 +34,7 @@ Shader "Custom/DepthShader3"
 	sampler2D _lastFrameArray;
 	int sizeImage = 4;
 	float dt = 0.1;
-
+	float s = 0.0;
 
 	float4 frag(v2f i) : COLOR
 	{
@@ -82,8 +84,9 @@ Shader "Custom/DepthShader3"
 		float speedPixel = sqrt(pow(distanceX, 2) + pow(distanceY, 2))*pixelSize / dt;
 		OF = 1 - exp(-pow(speedPixel, 2) / (2 * pow(m, 2)));
 
-
-		//return float4(TTC, OF, 0, 0);
+		float deltazinho = s / 2;
+		float w = exp(pow(deltazinho - i.depth, 2) / pow(0.25*deltazinho, 2));
+		//return float4(TTC, OF, w, 0);
 		//v = v / (2);
 		return float4(x1, y1, z1, F1);
 	}
