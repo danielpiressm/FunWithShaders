@@ -7,13 +7,14 @@ public class DepthGrayScale2 : MonoBehaviour
     float[] array;
     float[] lastFrameArray;
     TestTask tTask;
-
+    GameObject go;
 
     public RenderTexture rTex;
     public RenderTexture lastFrameTex;
 
 
     public Material mat;
+    public Material mat2;
     public int M;
     public int N;
     public Shader shader;
@@ -29,6 +30,7 @@ public class DepthGrayScale2 : MonoBehaviour
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
 
         mCamera = this.GetComponent<Camera>();
+        mCamera.depthTextureMode = DepthTextureMode.Depth;
 
         rTex = mCamera.targetTexture;
         rTex.width = M;
@@ -36,10 +38,12 @@ public class DepthGrayScale2 : MonoBehaviour
         mCamera.SetReplacementShader(shader, "");
         
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
+        
         tTask = transform.parent.GetComponent<TestTask>();
         rTex.width = M;
         rTex.height = N;
         Shader.SetGlobalInt("sizeImage", M);
+        go = GameObject.Find("SQUARE");
     }
 
    
@@ -93,10 +97,12 @@ public class DepthGrayScale2 : MonoBehaviour
         
         Graphics.Blit(source, destination);
         array = DecodeFloatTexture();
+        //go.GetComponent<Renderer>().material.SetTexture("_MainTex", destination);
         tTask.setArray1(array);
 
         float[] arrayOfUV = new float[M*N*2];
         int j = 0;
+        float biggestDepthValue = 0.0f;
         for(int i = 3;i < array.Length;i+=4)
         {
             float F = array[i];
@@ -105,11 +111,15 @@ public class DepthGrayScale2 : MonoBehaviour
             arrayOfUV[j] = u;
             arrayOfUV[j + 1] = v;
             j+=2;
+            float z = array[i - 1];
+            if (z > biggestDepthValue)
+                biggestDepthValue = z;
         }
+        Debug.Log("Biggest Depth Value = " + biggestDepthValue);
         RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
         float currentTime = Time.realtimeSinceStartup;
         float dt = currentTime - previousTime;
-
+        
         //a partir daqui sao contas marotas (e logicamente so consigo fazer isso após 1 frame :-) )
         if(countFrames > 0)
         {
@@ -150,7 +160,7 @@ public class DepthGrayScale2 : MonoBehaviour
             a = a + 0.05f * (aopt - a);
             s = s + a * dt;
         }
-
+        
         //agora guarda o frame anterior :-)
         lastFrameTex = rTex;
         lastFrameArray = array;

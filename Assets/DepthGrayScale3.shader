@@ -88,7 +88,9 @@ Shader "Custom/DepthShader3"
 		float w = exp(pow(deltazinho - i.depth, 2) / pow(0.25*deltazinho, 2));
 		//return float4(TTC, OF, w, 0);
 		//v = v / (2);
-		return float4(x1, y1, z1, F1);
+		//return float4(x1, y1, z1, F1);
+		UNITY_OUTPUT_DEPTH(i.depth);
+
 	}
 
 		ENDCG
