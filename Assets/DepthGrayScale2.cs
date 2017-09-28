@@ -134,7 +134,7 @@ public class DepthGrayScale2 : MonoBehaviour
             if (z > biggestDepthValue)
                 biggestDepthValue = z;
         }
-        //Debug.Log("Biggest Depth Value = " + biggestDepthValue);
+        Debug.Log("Biggest Depth Value = " + biggestDepthValue);
         RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
         
         float currentTime = Time.realtimeSinceStartup;
@@ -146,7 +146,7 @@ public class DepthGrayScale2 : MonoBehaviour
         if(countFrames > 0)
         {
             bool framesAreEqual = tTask.compareTwoArrays(array, lastFrameArray);
-            Debug.Log("frames are " + (framesAreEqual ? "equal" : "not equal" ));
+            //Debug.Log("frames are " + (framesAreEqual ? "equal" : "not equal" ));
             Shader.SetGlobalTexture("_floatArray", rTex);
             Shader.SetGlobalTexture("_lastFrameArray", lastFrameTex);
             Shader.SetGlobalFloat("dt", dt);
