@@ -38,6 +38,7 @@ public class DepthGrayScale2 : MonoBehaviour
         mCamera.SetReplacementShader(shader, "");
         
         decTex = new Texture2D(M, N, TextureFormat.RGBAFloat, false);
+        lastFrameTex = new RenderTexture(M, N, 24, RenderTextureFormat.ARGBFloat);
         
         tTask = transform.parent.GetComponent<TestTask>();
         rTex.width = M;
@@ -90,8 +91,26 @@ public class DepthGrayScale2 : MonoBehaviour
         return results;
     }
 
+    //change name when needed :-)
+    void OnRenderImageTest(RenderTexture source, RenderTexture destination)
+    {
+        Graphics.Blit(source, destination);
+        array = DecodeFloatTexture();
 
-    // Update is called once per frame
+        if(lastFrameTex != null)
+        {
+            lastFrameArray = DecodeFloatTexture(lastFrameTex);
+            bool isTrue = tTask.compareTwoArrays(array, lastFrameArray);
+            Debug.Log("arrays are " + isTrue);
+        }
+
+        
+        Graphics.Blit(source, lastFrameTex);
+
+    }
+
+
+// Update is called once per frame
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         
@@ -115,14 +134,19 @@ public class DepthGrayScale2 : MonoBehaviour
             if (z > biggestDepthValue)
                 biggestDepthValue = z;
         }
-        Debug.Log("Biggest Depth Value = " + biggestDepthValue);
+        //Debug.Log("Biggest Depth Value = " + biggestDepthValue);
         RenderTexture rTex2 = new RenderTexture(rTex.width, rTex.height, 16, RenderTextureFormat.ARGBFloat);
+        
         float currentTime = Time.realtimeSinceStartup;
         float dt = currentTime - previousTime;
         
+       
+
         //a partir daqui sao contas marotas (e logicamente so consigo fazer isso após 1 frame :-) )
         if(countFrames > 0)
         {
+            bool framesAreEqual = tTask.compareTwoArrays(array, lastFrameArray);
+            Debug.Log("frames are " + (framesAreEqual ? "equal" : "not equal" ));
             Shader.SetGlobalTexture("_floatArray", rTex);
             Shader.SetGlobalTexture("_lastFrameArray", lastFrameTex);
             Shader.SetGlobalFloat("dt", dt);
@@ -162,8 +186,9 @@ public class DepthGrayScale2 : MonoBehaviour
         }
         
         //agora guarda o frame anterior :-)
-        lastFrameTex = rTex;
-        lastFrameArray = array;
+        Graphics.Blit(source, lastFrameTex);
+
+        //lastFrameArray = array;
         countFrames++;
     }
 
