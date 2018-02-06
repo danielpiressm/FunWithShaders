@@ -25,7 +25,7 @@ Shader "Custom/DepthShader2"
 			o.pos = UnityObjectToClipPos(input.pos);
 			o.projPos = UnityObjectToClipPos(input.pos);
 			o.wPos = mul(unity_ObjectToWorld, input.pos);
-			o.uv = float4(input.texcoord1.xy, 0, 0);
+			o.uv =  ComputeScreenPos(input.pos); //float4(input.texcoord1.xy, 0, 0);
 			return o;
 		}
 
@@ -41,7 +41,9 @@ Shader "Custom/DepthShader2"
 			float y = i.projPos.y;
 			float z = i.projPos.z;
 			float w = 1;
-			return float4(x,y,z,1);
+			
+			return float4(i.uv.x, i.uv.y, 0, 1);
+			//return float4(x,y,z,1);
 		}
 
 		ENDCG
